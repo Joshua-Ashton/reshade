@@ -9,6 +9,7 @@
 #include <cctype> // std::toupper
 #include <cassert>
 #include <functional>
+#include <limits>
 #include <string_view>
 
 struct on_scope_exit
