@@ -8,6 +8,7 @@
 #include <malloc.h> // alloca
 #include <algorithm> // std::upper_bound, std::sort
 #include <functional> // std::greater
+#include <span>
 
 enum class intrinsic_id : uint32_t
 {
@@ -107,11 +108,15 @@ struct intrinsic
 #define inout_storage3d_uint { reshadefx::type::t_storage3d_uint, 1, 1, reshadefx::type::q_inout }
 
 // Import intrinsic function definitions
-static const intrinsic s_intrinsics[] =
+static const std::span<intrinsic> get_intrinsics()
 {
-#define DEFINE_INTRINSIC(name, i, ret_type, ...) intrinsic(#name, intrinsic_id::name##i, ret_type, { __VA_ARGS__ }),
-	#include "effect_symbol_table_intrinsics.inl"
-};
+	static const intrinsic s_intrinsics[] =
+	{
+	#define DEFINE_INTRINSIC(name, i, ret_type, ...) intrinsic(#name, intrinsic_id::name##i, ret_type, { __VA_ARGS__ }),
+		#include "effect_symbol_table_intrinsics.inl"
+	};
+	return std::span<intrinsic>((intrinsic *)s_intrinsics, s_intrinsics + std::size(s_intrinsics));
+}
 
 #undef void
 #undef bool
@@ -416,7 +421,7 @@ bool reshadefx::symbol_table::resolve_function_call(const std::string &name, con
 	// Try matching against intrinsic functions if no matching user-defined function was found up to this point
 	if (num_overloads == 0)
 	{
-		for (const intrinsic &intrinsic : s_intrinsics)
+		for (const intrinsic &intrinsic : get_intrinsics())
 		{
 			if (intrinsic.function.name != name || intrinsic.function.parameter_list.size() != arguments.size())
 				continue;
