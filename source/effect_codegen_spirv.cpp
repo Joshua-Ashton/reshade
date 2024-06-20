@@ -138,14 +138,14 @@ public:
 private:
 	struct type_lookup
 	{
-		type type;
+		struct type type;
 		bool is_ptr;
 		uint32_t array_stride;
 		std::pair<spv::StorageClass, spv::ImageFormat> storage;
 
-		friend static bool operator==(const type_lookup &lhs, const type_lookup &rhs)
+		bool operator==(const type_lookup &rhs) const
 		{
-			return lhs.type == rhs.type && lhs.is_ptr == rhs.is_ptr && lhs.array_stride == rhs.array_stride && lhs.storage == rhs.storage;
+			return type == rhs.type && is_ptr == rhs.is_ptr && array_stride == rhs.array_stride && storage == rhs.storage;
 		}
 	};
 	struct function_blocks
@@ -157,14 +157,14 @@ private:
 		std::vector<type> param_types;
 		bool is_entry_point = false;
 
-		friend static bool operator==(const function_blocks &lhs, const function_blocks &rhs)
+		bool operator==(const function_blocks &rhs) const
 		{
-			if (lhs.param_types.size() != rhs.param_types.size())
+			if (param_types.size() != rhs.param_types.size())
 				return false;
-			for (size_t i = 0; i < lhs.param_types.size(); ++i)
-				if (!(lhs.param_types[i] == rhs.param_types[i]))
+			for (size_t i = 0; i < param_types.size(); ++i)
+				if (!(param_types[i] == rhs.param_types[i]))
 					return false;
-			return lhs.return_type == rhs.return_type;
+			return return_type == rhs.return_type;
 		}
 	};
 

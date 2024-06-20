@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <climits>
+
 #include "effect_token.hpp"
 
 namespace reshadefx
